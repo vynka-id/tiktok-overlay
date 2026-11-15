@@ -12,19 +12,10 @@
     font-family: 'Poppins', sans-serif;
   }
 
+  /* Mengisi seluruh layar browser/studio secara penuh */
   body {
     width: 100vw;
     height: 100vh;
-    background: #0b0c10;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-  }
-
-  .phone-container {
-    width: 1080px;
-    height: 1920px;
     background: radial-gradient(circle at top right, #1e112a, #0b0c10 70%);
     color: #ffffff;
     display: flex;
@@ -32,77 +23,74 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 80px 70px;
+    padding: 40px;
+    overflow: hidden;
     position: relative;
-    transform-origin: center;
-    transform: scale(calc(min(100vw / 1080, 100vh / 1920)));
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
   }
 
   .glow-cyan {
     position: absolute;
-    width: 500px;
-    height: 500px;
+    width: 35vw;
+    height: 35vw;
     background: rgba(0, 242, 254, 0.15);
-    filter: blur(140px);
+    filter: blur(120px);
     top: 15%;
-    left: -100px;
+    left: -10vw;
     border-radius: 50%;
   }
 
   .glow-pink {
     position: absolute;
-    width: 500px;
-    height: 500px;
+    width: 35vw;
+    height: 35vw;
     background: rgba(254, 44, 85, 0.18);
-    filter: blur(140px);
+    filter: blur(120px);
     bottom: 15%;
-    right: -100px;
+    right: -10vw;
     border-radius: 50%;
   }
 
-  /* Efek bergerak/berdenyut pada badge status */
+  /* Badge status bergerak */
   .badge {
     background: rgba(254, 44, 85, 0.2);
     border: 2px solid #fe2c55;
     color: #ff6b88;
-    padding: 12px 36px;
+    padding: 10px 30px;
     border-radius: 50px;
-    font-size: 26px;
+    font-size: 2.2vh;
     font-weight: 600;
-    letter-spacing: 4px;
-    margin-bottom: 35px;
+    letter-spacing: 3px;
+    margin-bottom: 3vh;
     animation: bounceGlow 2s infinite ease-in-out;
   }
 
   h1 {
-    font-size: 86px;
+    font-size: 7.5vh;
     font-weight: 800;
     line-height: 1.1;
-    margin-bottom: 30px;
+    margin-bottom: 2.5vh;
     background: linear-gradient(90deg, #00f2fe, #ffffff, #fe2c55);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   p.subtitle {
-    font-size: 34px;
+    font-size: 3vh;
     color: #cbd5e1;
-    line-height: 1.5;
-    max-width: 820px;
-    margin-bottom: 55px;
+    line-height: 1.4;
+    max-width: 800px;
+    margin-bottom: 4vh;
   }
 
-  /* Teks gaya modern menggantikan kotak jadwal */
   .next-live {
-    font-size: 38px;
+    font-size: 3.2vh;
     font-weight: 600;
     color: #00f2fe;
     letter-spacing: 2px;
     background: rgba(0, 242, 254, 0.08);
     border: 1px solid rgba(0, 242, 254, 0.2);
-    padding: 24px 50px;
-    border-radius: 24px;
+    padding: 2vh 4vw;
+    border-radius: 20px;
     backdrop-filter: blur(10px);
     animation: fadeInOut 3s infinite alternate;
   }
@@ -126,16 +114,14 @@
 </head>
 <body>
 
-  <div class="phone-container">
-    <div class="glow-cyan"></div>
-    <div class="glow-pink"></div>
+  <div class="glow-cyan"></div>
+  <div class="glow-pink"></div>
 
-    <div class="badge">● STREAM SELESAI</div>
-    <h1>TERIMA KASIH<br>SUDAH NONTON!</h1>
-    <p class="subtitle">Makasih banyak buat semua yang sudah mampir, tap-tap layar, dan dukung live hari ini ya!</p>
+  <div class="badge">● STREAM SELESAI</div>
+  <h1>TERIMA KASIH<br>SUDAH NONTON!</h1>
+  <p class="subtitle">Makasih banyak buat semua yang sudah mampir, tap-tap layar, dan dukung live hari ini ya!</p>
 
-    <div class="next-live">✨ Nantikan live berikutnya ✨</div>
-  </div>
+  <div class="next-live">✨ Nantikan live berikutnya ✨</div>
 
 </body>
 </html>
