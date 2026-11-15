@@ -1,127 +1,217 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-  }
-
-  /* Mengisi seluruh layar browser/studio secara penuh */
-  body {
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(circle at top right, #1e112a, #0b0c10 70%);
-    color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 40px;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .glow-cyan {
-    position: absolute;
-    width: 35vw;
-    height: 35vw;
-    background: rgba(0, 242, 254, 0.15);
-    filter: blur(120px);
-    top: 15%;
-    left: -10vw;
-    border-radius: 50%;
-  }
-
-  .glow-pink {
-    position: absolute;
-    width: 35vw;
-    height: 35vw;
-    background: rgba(254, 44, 85, 0.18);
-    filter: blur(120px);
-    bottom: 15%;
-    right: -10vw;
-    border-radius: 50%;
-  }
-
-  /* Badge status bergerak */
-  .badge {
-    background: rgba(254, 44, 85, 0.2);
-    border: 2px solid #fe2c55;
-    color: #ff6b88;
-    padding: 10px 30px;
-    border-radius: 50px;
-    font-size: 2.2vh;
-    font-weight: 600;
-    letter-spacing: 3px;
-    margin-bottom: 3vh;
-    animation: bounceGlow 2s infinite ease-in-out;
-  }
-
-  h1 {
-    font-size: 7.5vh;
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 2.5vh;
-    background: linear-gradient(90deg, #00f2fe, #ffffff, #fe2c55);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  p.subtitle {
-    font-size: 3vh;
-    color: #cbd5e1;
-    line-height: 1.4;
-    max-width: 800px;
-    margin-bottom: 4vh;
-  }
-
-  .next-live {
-    font-size: 3.2vh;
-    font-weight: 600;
-    color: #00f2fe;
-    letter-spacing: 2px;
-    background: rgba(0, 242, 254, 0.08);
-    border: 1px solid rgba(0, 242, 254, 0.2);
-    padding: 2vh 4vw;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    animation: fadeInOut 3s infinite alternate;
-  }
-
-  @keyframes bounceGlow {
-    0%, 100% { 
-      transform: scale(1); 
-      box-shadow: 0 0 10px rgba(254,44,85,0.3);
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1080, initial-scale=1.0">
+  <title>Toobey - End Stream Overlay</title>
+  <style>
+    :root {
+      --cyan: #55f3ff;
+      --pink: #ff4fd8;
+      --white: #f7f8ff;
     }
-    50% { 
-      transform: scale(1.06); 
-      box-shadow: 0 0 25px rgba(254,44,85,0.6);
+    * { box-sizing: border-box; }
+    html, body {
+      width: 1080px;
+      height: 1920px;
+      margin: 0;
+      overflow: hidden;
+      background: transparent;
+      font-family: "Courier New", monospace;
     }
-  }
+    .screen {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background:
+        radial-gradient(ellipse at 50% 42%, rgba(44, 47, 112, .78), transparent 55%),
+        linear-gradient(180deg, #050816, #0d0923);
+    }
+    .grid {
+      position: absolute;
+      inset: 42% -50% -25%;
+      opacity: .36;
+      background-image:
+        linear-gradient(rgba(85,243,255,.42) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(85,243,255,.42) 1px, transparent 1px);
+      background-size: 52px 38px;
+      transform: perspective(330px) rotateX(58deg);
+      transform-origin: top center;
+      mask-image: linear-gradient(to bottom, transparent, #000 18%, #000);
+    }
+    .stars, .stars::before, .stars::after {
+      position: absolute;
+      inset: 0;
+      content: "";
+      pointer-events: none;
+      background-image: radial-gradient(#fff 1px, transparent 1.5px);
+      background-size: 83px 97px;
+      opacity: .35;
+      animation: drift 24s linear infinite;
+    }
+    .stars::before { background-size: 131px 119px; opacity: .45; animation-duration: 34s; }
+    .stars::after { background-size: 57px 71px; opacity: .2; animation-duration: 17s; }
+    @keyframes drift { to { transform: translateY(90px); } }
 
-  @keyframes fadeInOut {
-    0% { opacity: 0.8; transform: translateY(0); }
-    100% { opacity: 1; transform: translateY(-4px); }
-  }
-</style>
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .12;
+      background: repeating-linear-gradient(to bottom, transparent 0 3px, #000 4px 5px);
+    }
+    .content {
+      position: relative;
+      z-index: 2;
+      width: 900px;
+      text-align: center;
+      padding: 50px 24px;
+      transform: translateY(-20px);
+    }
+    .pixel-icon {
+      width: 110px;
+      height: 90px;
+      margin: 0 auto 58px;
+      position: relative;
+      filter: drop-shadow(0 0 16px rgba(85,243,255,.55));
+    }
+    .pixel-icon::before {
+      content: "✦";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 92px;
+      color: var(--cyan);
+      text-shadow: 7px 7px 0 var(--pink);
+      animation: float 2.5s ease-in-out infinite;
+    }
+    @keyframes float {
+      50% { transform: translateY(-12px) rotate(8deg); }
+    }
+    .eyebrow {
+      color: var(--cyan);
+      font-size: 22px;
+      letter-spacing: .42em;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-size: 112px;
+      line-height: .98;
+      letter-spacing: .04em;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: var(--white);
+      text-shadow: 4px 4px 0 var(--pink), 8px 8px 0 rgba(85,243,255,.45),
+                   0 0 34px rgba(85,243,255,.35);
+      animation: title-motion 3.2s ease-in-out infinite, glitch 6s steps(1) infinite;
+      will-change: transform, filter;
+    }
+    @keyframes title-motion {
+      0%, 100% { transform: translateY(0) scale(1); }
+      25% { transform: translateY(-16px) scale(1.025); }
+      50% { transform: translateY(0) scale(1); }
+      75% { transform: translateY(10px) scale(.99); }
+    }
+    @keyframes glitch {
+      0%, 91%, 94%, 100% { filter: none; }
+      92% { filter: drop-shadow(-7px 0 var(--cyan)) drop-shadow(7px 0 var(--pink)); }
+      93% { filter: drop-shadow(5px 0 var(--cyan)) drop-shadow(-5px 0 var(--pink)); }
+    }
+    .divider {
+      width: 430px;
+      height: 4px;
+      margin: 54px auto 42px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--pink), transparent);
+      box-shadow: 0 0 14px var(--cyan);
+    }
+    .thanks {
+      font-family: Arial, sans-serif;
+      font-size: 29px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      margin: 0;
+    }
+    .equalizer {
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      gap: 7px;
+      height: 30px;
+      margin: 48px auto 0;
+    }
+    .equalizer span {
+      width: 5px;
+      height: 9px;
+      border-radius: 3px;
+      background: var(--pink);
+      box-shadow: 0 0 8px var(--pink);
+      animation: bars .75s ease-in-out infinite alternate;
+    }
+    .equalizer span:nth-child(2n) { animation-delay: -.3s; background: var(--cyan); }
+    .equalizer span:nth-child(3n) { animation-delay: -.55s; }
+    @keyframes bars { to { height: 29px; } }
+    .handle {
+      display: inline-block;
+      margin-top: 54px;
+      padding: 15px 28px;
+      border: 1px solid rgba(85,243,255,.7);
+      color: var(--cyan);
+      background: rgba(85,243,255,.07);
+      border-radius: 4px;
+      font-size: 20px;
+      letter-spacing: .12em;
+      box-shadow: 0 0 20px rgba(85,243,255,.12);
+    }
+    .bottom {
+      position: absolute;
+      z-index: 2;
+      bottom: 85px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      color: rgba(210,220,255,.55);
+      font-size: 15px;
+      letter-spacing: .3em;
+    }
+  </style>
 </head>
 <body>
+  <main class="screen">
+    <div class="stars"></div>
+    <div class="grid"></div>
+    <div class="scanlines"></div>
+    <section class="content">
+      <div class="pixel-icon" aria-hidden="true"></div>
+      <div class="eyebrow">Game Over · Stream Offline</div>
+      <h1>Stream<br>Ended</h1>
+      <div class="divider"></div>
+      <p class="thanks">THANKS FOR WATCHING!</p>
+      <div class="equalizer" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </div>
+      <div class="handle">@TOOBEY</div>
+    </section>
+    <div class="bottom">THANK YOU FOR BEING PART OF THE GAME</div>
+  </main>
 
-  <div class="glow-cyan"></div>
-  <div class="glow-pink"></div>
-
-  <div class="badge">● STREAM SELESAI</div>
-  <h1>TERIMA KASIH<br>SUDAH NONTON!</h1>
-  <p class="subtitle">Makasih banyak buat semua yang sudah mampir, tap-tap layar, dan dukung live hari ini ya!</p>
-
-  <div class="next-live">✨ Nantikan live berikutnya ✨</div>
-
+  <!-- Letakkan file musik milikmu sendiri bernama end-song.mp3 di folder yang sama. -->
+  <audio id="endMusic" src="end-song.mp3" autoplay loop preload="auto"></audio>
+  <script>
+    const music = document.getElementById('endMusic');
+    const startMusic = () => {
+      if (music.paused) music.play().catch(() => {});
+    };
+    document.addEventListener('pointerdown', startMusic, { once: true });
+    window.addEventListener('load', startMusic);
+  </script>
 </body>
 </html>
