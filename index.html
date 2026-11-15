@@ -1,217 +1,148 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=1080, initial-scale=1.0">
-  <title>Toobey - End Stream Overlay</title>
-  <style>
-    :root {
-      --cyan: #55f3ff;
-      --pink: #ff4fd8;
-      --white: #f7f8ff;
-    }
-    * { box-sizing: border-box; }
-    html, body {
-      width: 1080px;
-      height: 1920px;
-      margin: 0;
-      overflow: hidden;
-      background: transparent;
-      font-family: "Courier New", monospace;
-    }
-    .screen {
-      position: relative;
-      width: 1080px;
-      height: 1920px;
-      overflow: hidden;
-      display: grid;
-      place-items: center;
-      color: var(--white);
-      background:
-        radial-gradient(ellipse at 50% 42%, rgba(44, 47, 112, .78), transparent 55%),
-        linear-gradient(180deg, #050816, #0d0923);
-    }
-    .grid {
-      position: absolute;
-      inset: 42% -50% -25%;
-      opacity: .36;
-      background-image:
-        linear-gradient(rgba(85,243,255,.42) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(85,243,255,.42) 1px, transparent 1px);
-      background-size: 52px 38px;
-      transform: perspective(330px) rotateX(58deg);
-      transform-origin: top center;
-      mask-image: linear-gradient(to bottom, transparent, #000 18%, #000);
-    }
-    .stars, .stars::before, .stars::after {
-      position: absolute;
-      inset: 0;
-      content: "";
-      pointer-events: none;
-      background-image: radial-gradient(#fff 1px, transparent 1.5px);
-      background-size: 83px 97px;
-      opacity: .35;
-      animation: drift 24s linear infinite;
-    }
-    .stars::before { background-size: 131px 119px; opacity: .45; animation-duration: 34s; }
-    .stars::after { background-size: 57px 71px; opacity: .2; animation-duration: 17s; }
-    @keyframes drift { to { transform: translateY(90px); } }
-
-    .scanlines {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      opacity: .12;
-      background: repeating-linear-gradient(to bottom, transparent 0 3px, #000 4px 5px);
-    }
-    .content {
-      position: relative;
-      z-index: 2;
-      width: 900px;
-      text-align: center;
-      padding: 50px 24px;
-      transform: translateY(-20px);
-    }
-    .pixel-icon {
-      width: 110px;
-      height: 90px;
-      margin: 0 auto 58px;
-      position: relative;
-      filter: drop-shadow(0 0 16px rgba(85,243,255,.55));
-    }
-    .pixel-icon::before {
-      content: "✦";
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      font-size: 92px;
-      color: var(--cyan);
-      text-shadow: 7px 7px 0 var(--pink);
-      animation: float 2.5s ease-in-out infinite;
-    }
-    @keyframes float {
-      50% { transform: translateY(-12px) rotate(8deg); }
-    }
-    .eyebrow {
-      color: var(--cyan);
-      font-size: 22px;
-      letter-spacing: .42em;
-      margin-bottom: 30px;
-      text-transform: uppercase;
-    }
-    h1 {
-      margin: 0;
-      font-size: 112px;
-      line-height: .98;
-      letter-spacing: .04em;
-      font-weight: 900;
-      text-transform: uppercase;
-      color: var(--white);
-      text-shadow: 4px 4px 0 var(--pink), 8px 8px 0 rgba(85,243,255,.45),
-                   0 0 34px rgba(85,243,255,.35);
-      animation: title-motion 3.2s ease-in-out infinite, glitch 6s steps(1) infinite;
-      will-change: transform, filter;
-    }
-    @keyframes title-motion {
-      0%, 100% { transform: translateY(0) scale(1); }
-      25% { transform: translateY(-16px) scale(1.025); }
-      50% { transform: translateY(0) scale(1); }
-      75% { transform: translateY(10px) scale(.99); }
-    }
-    @keyframes glitch {
-      0%, 91%, 94%, 100% { filter: none; }
-      92% { filter: drop-shadow(-7px 0 var(--cyan)) drop-shadow(7px 0 var(--pink)); }
-      93% { filter: drop-shadow(5px 0 var(--cyan)) drop-shadow(-5px 0 var(--pink)); }
-    }
-    .divider {
-      width: 430px;
-      height: 4px;
-      margin: 54px auto 42px;
-      background: linear-gradient(90deg, transparent, var(--cyan), var(--pink), transparent);
-      box-shadow: 0 0 14px var(--cyan);
-    }
-    .thanks {
-      font-family: Arial, sans-serif;
-      font-size: 29px;
-      font-weight: 700;
-      letter-spacing: .1em;
-      margin: 0;
-    }
-    .equalizer {
-      display: flex;
-      align-items: end;
-      justify-content: center;
-      gap: 7px;
-      height: 30px;
-      margin: 48px auto 0;
-    }
-    .equalizer span {
-      width: 5px;
-      height: 9px;
-      border-radius: 3px;
-      background: var(--pink);
-      box-shadow: 0 0 8px var(--pink);
-      animation: bars .75s ease-in-out infinite alternate;
-    }
-    .equalizer span:nth-child(2n) { animation-delay: -.3s; background: var(--cyan); }
-    .equalizer span:nth-child(3n) { animation-delay: -.55s; }
-    @keyframes bars { to { height: 29px; } }
-    .handle {
-      display: inline-block;
-      margin-top: 54px;
-      padding: 15px 28px;
-      border: 1px solid rgba(85,243,255,.7);
-      color: var(--cyan);
-      background: rgba(85,243,255,.07);
-      border-radius: 4px;
-      font-size: 20px;
-      letter-spacing: .12em;
-      box-shadow: 0 0 20px rgba(85,243,255,.12);
-    }
-    .bottom {
-      position: absolute;
-      z-index: 2;
-      bottom: 85px;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      color: rgba(210,220,255,.55);
-      font-size: 15px;
-      letter-spacing: .3em;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toobey - End Stream Overlay</title>
+<style>
+:root { --cyan:#55f3ff; --pink:#ff4fd8; --white:#f7f8ff; }
+* { box-sizing:border-box; }
+html,body {
+  width:100%; height:100%; margin:0; overflow:hidden;
+  background:#050816; font-family:"Courier New",monospace;
+}
+/* Kanvas selalu 9:16. Di laptop diperkecil agar seluruh desain terlihat;
+   pada sumber 1080x1920, kanvas mengisi seluruh area. */
+body { display:grid; place-items:center; }
+.screen {
+  position:relative;
+  width:min(100vw, 56.25vh);
+  height:min(100vh, 177.7778vw);
+  aspect-ratio:9 / 16;
+  overflow:hidden; display:grid; place-items:center; color:var(--white);
+  container-type:size;
+  background:
+    radial-gradient(ellipse at 50% 42%,rgba(44,47,112,.78),transparent 55%),
+    linear-gradient(180deg,#050816,#0d0923);
+}
+.grid {
+  position:absolute; inset:42% -50% -25%; opacity:.36;
+  background-image:
+    linear-gradient(rgba(85,243,255,.42) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(85,243,255,.42) 1px,transparent 1px);
+  background-size:4.82cqw 3.52cqw;
+  transform:perspective(30cqw) rotateX(58deg); transform-origin:top center;
+  mask-image:linear-gradient(to bottom,transparent,#000 18%,#000);
+}
+.stars,.stars::before,.stars::after {
+  position:absolute; inset:0; content:""; pointer-events:none;
+  background-image:radial-gradient(#fff 1px,transparent 1.5px);
+  background-size:7.7cqw 9cqw; opacity:.35;
+  animation:drift 24s linear infinite;
+}
+.stars::before { background-size:12.1cqw 11cqw; opacity:.45; animation-duration:34s; }
+.stars::after { background-size:5.3cqw 6.6cqw; opacity:.2; animation-duration:17s; }
+@keyframes drift { to { transform:translateY(9cqw); } }
+.scanlines {
+  position:absolute; inset:0; pointer-events:none; opacity:.12;
+  background:repeating-linear-gradient(to bottom,transparent 0 3px,#000 4px 5px);
+}
+.content {
+  position:relative; z-index:2; width:83.33cqw; text-align:center;
+  padding:4.63cqw 2.22cqw; transform:translateY(-1.85cqw);
+}
+.pixel-icon {
+  width:10.2cqw; height:8.33cqw; margin:0 auto 5.37cqw;
+  position:relative; filter:drop-shadow(0 0 1.48cqw rgba(85,243,255,.55));
+}
+.pixel-icon::before {
+  content:"✦"; position:absolute; inset:0; display:grid; place-items:center;
+  font-size:8.52cqw; color:var(--cyan); text-shadow:.65cqw .65cqw 0 var(--pink);
+  animation:float 2.5s ease-in-out infinite;
+}
+@keyframes float { 50% { transform:translateY(-1.1cqw) rotate(8deg); } }
+.eyebrow {
+  color:var(--cyan); font-size:2.04cqw; letter-spacing:.42em;
+  margin-bottom:2.78cqw; text-transform:uppercase;
+}
+h1 {
+  margin:0; font-size:10.37cqw; line-height:.98; letter-spacing:.04em;
+  font-weight:900; text-transform:uppercase; color:var(--white);
+  text-shadow:.37cqw .37cqw 0 var(--pink),.74cqw .74cqw 0 rgba(85,243,255,.45),
+              0 0 3.15cqw rgba(85,243,255,.35);
+  animation:title-motion 3.2s ease-in-out infinite,glitch 6s steps(1) infinite;
+  will-change:transform,filter;
+}
+@keyframes title-motion {
+  0%,100% { transform:translateY(0) scale(1); }
+  25% { transform:translateY(-1.48cqw) scale(1.025); }
+  50% { transform:translateY(0) scale(1); }
+  75% { transform:translateY( .93cqw) scale(.99); }
+}
+@keyframes glitch {
+  0%,91%,94%,100% { filter:none; }
+  92% { filter:drop-shadow(-.65cqw 0 var(--cyan)) drop-shadow(.65cqw 0 var(--pink)); }
+  93% { filter:drop-shadow(.46cqw 0 var(--cyan)) drop-shadow(-.46cqw 0 var(--pink)); }
+}
+.divider {
+  width:39.8cqw; height:.37cqw; margin:5cqw auto 3.9cqw;
+  background:linear-gradient(90deg,transparent,var(--cyan),var(--pink),transparent);
+  box-shadow:0 0 1.3cqw var(--cyan);
+}
+.thanks {
+  font-family:Arial,sans-serif; font-size:2.69cqw; font-weight:700;
+  letter-spacing:.1em; margin:0;
+}
+.equalizer {
+  display:flex; align-items:end; justify-content:center; gap:.65cqw;
+  height:2.78cqw; margin:4.45cqw auto 0;
+}
+.equalizer span {
+  width:.46cqw; height:.83cqw; border-radius:3px; background:var(--pink);
+  box-shadow:0 0 .74cqw var(--pink); animation:bars .75s ease-in-out infinite alternate;
+}
+.equalizer span:nth-child(2n) { animation-delay:-.3s; background:var(--cyan); }
+.equalizer span:nth-child(3n) { animation-delay:-.55s; }
+@keyframes bars { to { height:2.69cqw; } }
+.handle {
+  display:inline-block; margin-top:5cqw; padding:1.39cqw 2.59cqw;
+  border:1px solid rgba(85,243,255,.7); color:var(--cyan);
+  background:rgba(85,243,255,.07); border-radius:4px;
+  font-size:1.85cqw; letter-spacing:.12em;
+  box-shadow:0 0 1.85cqw rgba(85,243,255,.12);
+}
+.bottom {
+  position:absolute; z-index:2; bottom:4.43cqh; left:0; width:100%;
+  text-align:center; color:rgba(210,220,255,.55);
+  font-size:1.39cqw; letter-spacing:.3em;
+}
+</style>
 </head>
 <body>
-  <main class="screen">
-    <div class="stars"></div>
-    <div class="grid"></div>
-    <div class="scanlines"></div>
-    <section class="content">
-      <div class="pixel-icon" aria-hidden="true"></div>
-      <div class="eyebrow">Game Over · Stream Offline</div>
-      <h1>Stream<br>Ended</h1>
-      <div class="divider"></div>
-      <p class="thanks">THANKS FOR WATCHING!</p>
-      <div class="equalizer" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span>
-      </div>
-      <div class="handle">@TOOBEY</div>
-    </section>
-    <div class="bottom">THANK YOU FOR BEING PART OF THE GAME</div>
-  </main>
-
-  <!-- Letakkan file musik milikmu sendiri bernama end-song.mp3 di folder yang sama. -->
-  <audio id="endMusic" src="end-song.mp3" autoplay loop preload="auto"></audio>
-  <script>
-    const music = document.getElementById('endMusic');
-    const startMusic = () => {
-      if (music.paused) music.play().catch(() => {});
-    };
-    document.addEventListener('pointerdown', startMusic, { once: true });
-    window.addEventListener('load', startMusic);
-  </script>
+<main class="screen">
+  <div class="stars"></div><div class="grid"></div><div class="scanlines"></div>
+  <section class="content">
+    <div class="pixel-icon" aria-hidden="true"></div>
+    <div class="eyebrow">Game Over · Stream Offline</div>
+    <h1>Stream<br>Ended</h1>
+    <div class="divider"></div>
+    <p class="thanks">THANKS FOR WATCHING!</p>
+    <div class="equalizer" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </div>
+    <div class="handle">@TOOBEY</div>
+  </section>
+  <div class="bottom">THANK YOU FOR BEING PART OF THE GAME</div>
+</main>
+<!-- Taruh file musik sendiri bernama end-song.mp3 di folder yang sama. -->
+<audio id="endMusic" src="end-song.mp3" autoplay loop preload="auto"></audio>
+<script>
+const music=document.getElementById('endMusic');
+const startMusic=()=>{ if(music.paused) music.play().catch(()=>{}); };
+document.addEventListener('pointerdown',startMusic,{once:true});
+window.addEventListener('load',startMusic);
+</script>
 </body>
 </html>
